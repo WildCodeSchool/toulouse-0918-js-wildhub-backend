@@ -2,14 +2,16 @@
   "name": "wildhub-backend",
   "version": "0.1.0",
   "main": "lib/index.js",
-  "files": ["lib/**/*"],
+  "files": [
+    "lib/**/*"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/WildCodeSchool/toulouse-0918-js-wildhub-backend.git"
   },
   "scripts": {
-    "test": "./node_modules/jasmine/bin/jasmine.js tests/*"
+    "test": "./node_modules/jasmine/bin/jasmine.js tests/*.spec.js tests/**/*.spec.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -21,6 +23,7 @@
     "eslint": "^5.6.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "jasmine": "^3.2.0"
+    "jasmine": "^3.2.0",
+    "supertest": "^3.3.0"
   }
 }
