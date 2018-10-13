@@ -18,7 +18,7 @@ class MyWildHubReposList extends Component {
    * Va chercher la liste des projets de l'utilisateur sur l'API WildHub
    */
   fetchReposFromWildHubApi() {
-      apiAxios.get('/api/projects')
+      apiAxios.get('/users/self/projects')
         .then(res => res.data)
         .then(repos => this.setState({ repos }));
   }

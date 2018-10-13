@@ -6,6 +6,6 @@ export const githubAxios = axios.create({
 });
 
 export const apiAxios = axios.create({
-  baseURL: 'https://wildhub.ssd1.ovh',
+  baseURL: 'https://wildhub.ssd1.ovh/api',
   timeout: 1000
 });
