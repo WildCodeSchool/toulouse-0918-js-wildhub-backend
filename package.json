@@ -11,7 +11,8 @@
     "url": "git://github.com/WildCodeSchool/toulouse-0918-js-wildhub-backend.git"
   },
   "scripts": {
-    "test": "./node_modules/jasmine/bin/jasmine.js tests/*.spec.js tests/**/*.spec.js"
+    "test": "./node_modules/jasmine/bin/jasmine.js tests/*.spec.js tests/**/*.spec.js",
+    "lint": "./node_modules/eslint/bin/eslint.js lib tests"
   },
   "dependencies": {
     "axios": "^0.18.0",
