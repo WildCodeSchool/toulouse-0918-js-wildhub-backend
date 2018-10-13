@@ -30,7 +30,7 @@ class App extends Component {
     // https://ariya.io/2013/02/es6-and-object-literal-property-value-shorthand
     // Equivalent à { jwt: jwt, login: login, ETC. }
     this.state = {
-      jwt, login, githubId, accessToken, repos: []
+      jwt, login, githubId, accessToken
     };
   }
 
@@ -46,8 +46,24 @@ class App extends Component {
     }
     // Sinon on décode les infos contenues dans le JWT
     const { login, githubId, accessToken } = jwtDecode(jwt);
+    this.setupAxiosInstances(accessToken, jwt);
     // Puis on renvoie tout
     return { jwt, login, githubId, accessToken };
+  }
+
+  setupAxiosInstances(accessToken, jwt) {
+    // Set up GitHub axios instance
+    Object.assign(githubAxios.defaults, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    // Set up WildHub API axios instance
+    Object.assign(apiAxios.defaults, {
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    });
   }
 
   updateStateOnSuccess = ({ token }) => {
@@ -57,16 +73,7 @@ class App extends Component {
 
     // Configuration des deux instances d'axios
     // chacune avec leur token d'authentification
-    githubAxios.options({
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
-    apiAxios.options({
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    this.setupAxiosInstances(accessToken, token);
     this.setState({
       jwt: token, accessToken, login, githubId
     });
@@ -99,11 +106,11 @@ class App extends Component {
    */
   handleResetState = () => {
     localStorage.removeItem('jwt');
-    this.setState({ jwt: '', login: '', githubId: 0, accessToken: '', repos: [] })
+    this.setState({ jwt: '', login: '', githubId: 0, accessToken: '' })
   }
 
   render() {
-    const { repos, login } = this.state;
+    const { login } = this.state;
     return (
       <BrowserRouter>
         <div>

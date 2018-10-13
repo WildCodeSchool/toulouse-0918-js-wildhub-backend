@@ -9,6 +9,19 @@ const RepositoryCard = props => (
         {props.repo.name}
       </div>
       <div className="card-body">
+        <ul className="repo-list">
+          <li>Owner: <b>{props.repo.owner.login}</b></li>
+        </ul>
+        {
+          typeof props.handleClick === 'function'
+          ? <button
+            className="btn btn-secondary"
+            onClick={() => props.handleClick(props.repo)}
+          >
+            action
+          </button>
+          : ''
+        }
       </div>
     </div>
   </div>

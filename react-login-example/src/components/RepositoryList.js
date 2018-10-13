@@ -6,7 +6,13 @@ const RepositoryList = props => (
     <div className="row">
     {
       props.repos.length > 0
-      ? props.repos.map(repo => <RepositoryCard repo={repo} />)
+      ? props.repos.map(repo => (
+        <RepositoryCard
+          key={repo.id}
+          repo={repo}
+          handleClick={props.handleClick}
+        />
+      ))
       : <div className="font-weight-bold">Empty repository list</div>
     }
     </div>

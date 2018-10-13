@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import RepositoryList from '../components/RepositoryList';
-import { githubAxios } from '../axiosInstances';
+import { githubAxios, apiAxios } from '../axiosInstances';
 
 class MyGitHubReposList extends Component {
   constructor(props) {
@@ -26,9 +26,18 @@ class MyGitHubReposList extends Component {
     }
   }
 
+  handleClickCard = repo => {
+    console.log('card clicked', repo);
+    // Exemple d'association d'un repo
+    apiAxios.post('/projects', repo);
+  }
+
   render() {
     const { repos } = this.state;
-    return <RepositoryList repos={repos} />
+    return <RepositoryList
+      repos={repos}
+      handleClick={this.handleClickCard}
+    />;
   }
 }
 

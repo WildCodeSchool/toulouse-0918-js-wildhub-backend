@@ -5,3 +5,11 @@
 .container-fluid {
   margin-top: 15px;
 }
+
+.repo-list {
+  padding: 0;
+}
+
+.repo-list li {
+  list-style-type: none;
+}
