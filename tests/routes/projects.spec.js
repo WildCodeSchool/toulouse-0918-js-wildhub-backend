@@ -32,6 +32,8 @@ describe('Test the projects root path', () => {
       .then(
         () => request(app).post('/api/projects')
           .send(dummyProject)
+          // Put a JWT in env
+          .set('Authorization', `Bearer ${process.env.JWT}`)
           .set('Content-Type', 'application/json')
           .set('Accept', 'application/json')
       )
