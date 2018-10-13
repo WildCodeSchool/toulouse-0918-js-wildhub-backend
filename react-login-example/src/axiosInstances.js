@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiUrl } from './settings';
 
 export const githubAxios = axios.create({
   baseURL: 'https://api.github.com',
@@ -6,6 +7,6 @@ export const githubAxios = axios.create({
 });
 
 export const apiAxios = axios.create({
-  baseURL: 'https://wildhub.ssd1.ovh/api',
+  baseURL: `${apiUrl}/api`,
   timeout: 5000
 });
