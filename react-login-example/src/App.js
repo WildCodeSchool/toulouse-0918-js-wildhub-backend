@@ -1,66 +1,149 @@
 import React, { Component } from 'react';
-import GitHubLogin from 'react-github-login';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import JSONTree from 'react-json-tree'
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
-import { clientId, redirectUri } from './settings';
+import Navbar from './components/Navbar';
+import LinksToOtherPages from './components/LinksToOtherPages';
+import MyGitHubReposList from './containers/MyGitHubReposList';
+import MyWildHubReposList from './containers/MyWildHubReposList';
+import AllWildHubReposList from './containers/AllWildHubReposList';
+import { apiUrl } from './settings';
+import { githubAxios, apiAxios } from './axiosInstances';
+import theme from './theme';
 import './App.css';
 
-const serverUrl = 'https://wildhub.ssd1.ovh';
-
+/**
+ * Exemple d'utilisation de l'API
+ */
 class App extends Component {
   constructor (props) {
     super(props);
+    // Récupération des données d'authentification, si disponibles
+    const {
+      jwt,
+      login,
+      githubId,
+      accessToken
+    } = this.getStoredAuthData();
+    // Utilisation de la "object literal property value shorthand"
+    // https://ariya.io/2013/02/es6-and-object-literal-property-value-shorthand
+    // Equivalent à { jwt: jwt, login: login, ETC. }
     this.state = {
-      accessToken: '',
-      repos: []
+      jwt, login, githubId, accessToken, repos: []
     };
   }
-  componentDidMount() {
-    this.fetchRepos();
-  }
-  fetchRepos() {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      this.setState({ accessToken });
-      axios.get('https://api.github.com/users/bhubr/repos', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
-      .then(res => res.data)
-      .then(repos => this.setState({ repos }))
+
+  /**
+   * Récupération de données d'authentification stockées dans localStorage,
+   * si elles sont disponibles
+   */
+  getStoredAuthData() {
+    const jwt = localStorage.getItem('jwt');
+    // On renvoie le tout vide si aucun JWT trouvé dans localStorage
+    if (!jwt) {
+      return { jwt: '', login: '', githubId: 0, accessToken: '' };
     }
+    // Sinon on décode les infos contenues dans le JWT
+    const { login, githubId, accessToken } = jwtDecode(jwt);
+    // Puis on renvoie tout
+    return { jwt, login, githubId, accessToken };
   }
 
-  onSuccess = ({ code }) => axios.post(`${serverUrl}/api/github/code`, {
+  updateStateOnSuccess = ({ token }) => {
+    const { accessToken, login, githubId } = jwtDecode(token);
+    console.log('decoded jwt', accessToken, login, githubId);
+    localStorage.setItem('jwt', token);
+
+    // Configuration des deux instances d'axios
+    // chacune avec leur token d'authentification
+    githubAxios.options({
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    apiAxios.options({
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    this.setState({
+      jwt: token, accessToken, login, githubId
+    });
+    // this.fetchReposFromGitHub();
+  };
+
+  /**
+   * Gère le cas où la première phase de l'authentification (autorisation pour WildHub
+   * d'accéder à l'API GitHub) a fonctionné.
+   * GitHub nous renvoie un code, qu'on envoie au serveur de l'API. Le serveur de l'API
+   * va finaliser le login via GitHub en envoyant ce code à GitHub, qui en retour lui
+   * fournit un "access token" qu'il faudra passer ensuite dans toutes les requêtes à
+   * GitHub.
+   */
+  handleLoginSuccess = ({ code }) => axios.post(`${apiUrl}/api/github/code`, {
     code
   })
     .then(response => response.data)
-    .then(({ token }) => {
-      const { accessToken, login, githubId } = jwtDecode(token);
-      console.log('decoded jwt', accessToken, login, githubId);
-      localStorage.setItem('jwt', token);
-      localStorage.setItem('accessToken', accessToken);
-      this.fetchRepos();
-    });
+    .then(this.updateStateOnSuccess);
 
-  onFailure = response => console.error(response);
+  /**
+   * Gère le cas où le login échoue (rien de spécial ici !)
+   */
+  handleLoginFailure = response => console.error(response);
+
+  /**
+   * On offre la possibilité de reset le state:
+   *   - on remet les valeurs initiales
+   *   - on supprime ce qui est enregistré dans localStorage
+   */
+  handleResetState = () => {
+    localStorage.removeItem('jwt');
+    this.setState({ jwt: '', login: '', githubId: 0, accessToken: '', repos: [] })
+  }
 
   render() {
-    const { accessToken, repos } = this.state;
+    const { repos, login } = this.state;
     return (
-      <div className="App">
-        <div>{accessToken}</div>
-        <GitHubLogin
-          clientId={clientId}
-          redirectUri={redirectUri}
-          onSuccess={this.onSuccess}
-          scope="user:email,public_repo,gist"
-          onFailure={this.onFailure}/>
-          <ul>
-            { repos.length && repos.map((r, k) => <li key={k}><a href={r.html_url}>{r.name}</a></li>)}
-          </ul>
-      </div>
+      <BrowserRouter>
+        <div>
+          <Navbar
+            handleLoginSuccess={this.handleLoginSuccess}
+            handleLoginFailure={this.handleLoginFailure}
+            login={login}
+          />
+          <div className="container-fluid">
+            <div className="row">
+              <Switch>
+                <Route path="/" exact component={LinksToOtherPages} />
+                <Route
+                  path="/my-github-repos"
+                  render={props => <MyGitHubReposList {...props} login={login} />} />
+                <Route path="/my-wildhub-repos" component={MyWildHubReposList} />
+                <Route path="/all-wildhub-repos" component={AllWildHubReposList} />
+              </Switch>
+              <div className="col-6 col-md-4">
+                {/* Card qui affiche le contenu du state  */}
+                <div className="card">
+                  <div className="card-header">
+                    State
+                    <button
+                      onClick={this.handleResetState}
+                      className="btn btn-sm btn-info"
+                      style={{ float: 'right' }}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  <div className="card-body">
+                    <JSONTree data={this.state} theme={theme} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </BrowserRouter>
     );
   }
 }
