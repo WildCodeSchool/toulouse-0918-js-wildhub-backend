@@ -1,6 +1,6 @@
 {
   "name": "wildhub-backend",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "main": "lib/index.js",
   "files": [
     "lib/**/*"
@@ -19,7 +19,8 @@
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
-    "mysql": "^2.16.0"
+    "mysql": "^2.16.0",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "bluebird": "^3.5.2",
