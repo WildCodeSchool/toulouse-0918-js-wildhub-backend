@@ -21,7 +21,7 @@ const Navbar = props => (
         ? <span>Logged-in as <b>{props.login}</b></span>
         : <GitHubLogin
           className="btn btn-primary"
-          scope="user:email,public_repo,gist"
+          scope="user:email,public_repo"
           clientId={clientId}
           redirectUri={redirectUri}
           onSuccess={props.handleLoginSuccess}

@@ -23,14 +23,14 @@ class App extends Component {
     const {
       jwt,
       login,
-      githubId,
+      id,
       accessToken
     } = this.getStoredAuthData();
     // Utilisation de la "object literal property value shorthand"
     // https://ariya.io/2013/02/es6-and-object-literal-property-value-shorthand
     // Equivalent à { jwt: jwt, login: login, ETC. }
     this.state = {
-      jwt, login, githubId, accessToken
+      jwt, login, id, accessToken
     };
   }
 
@@ -42,13 +42,13 @@ class App extends Component {
     const jwt = localStorage.getItem('jwt');
     // On renvoie le tout vide si aucun JWT trouvé dans localStorage
     if (!jwt) {
-      return { jwt: '', login: '', githubId: 0, accessToken: '' };
+      return { jwt: '', login: '', id: 0, accessToken: '' };
     }
     // Sinon on décode les infos contenues dans le JWT
-    const { login, githubId, accessToken } = jwtDecode(jwt);
+    const { login, id, accessToken } = jwtDecode(jwt);
     this.setupAxiosInstances(accessToken, jwt);
     // Puis on renvoie tout
-    return { jwt, login, githubId, accessToken };
+    return { jwt, login, id, accessToken };
   }
 
   setupAxiosInstances(accessToken, jwt) {
@@ -67,15 +67,15 @@ class App extends Component {
   }
 
   updateStateOnSuccess = ({ token }) => {
-    const { accessToken, login, githubId } = jwtDecode(token);
-    console.log('decoded jwt', accessToken, login, githubId);
+    const { accessToken, login, id } = jwtDecode(token);
+    console.log('decoded jwt', accessToken, login, id);
     localStorage.setItem('jwt', token);
 
     // Configuration des deux instances d'axios
     // chacune avec leur token d'authentification
     this.setupAxiosInstances(accessToken, token);
     this.setState({
-      jwt: token, accessToken, login, githubId
+      jwt: token, accessToken, login, id
     });
     // this.fetchReposFromGitHub();
   };
@@ -106,7 +106,7 @@ class App extends Component {
    */
   handleResetState = () => {
     localStorage.removeItem('jwt');
-    this.setState({ jwt: '', login: '', githubId: 0, accessToken: '' })
+    this.setState({ jwt: '', login: '', id: 0, accessToken: '' })
   }
 
   render() {
