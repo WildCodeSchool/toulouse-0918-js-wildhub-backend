@@ -2,7 +2,6 @@
 const assert = require('assert');
 const request = require('supertest');
 const { clear, insertLanguages, insertUser } = require('../server/db-utils');
-const { camelCaseKeys } = require('../../lib/case');
 const app = require('../server/app');
 
 const dummyProject = {
@@ -23,13 +22,12 @@ const dummyProject = {
 describe('Test the projects root path', () => {
   beforeEach(() => clear().then(insertLanguages));
 
-  it('It should test the GET method', (done) => {
+  it('It should test the GET method', () => {
     request(app).get('/api/projects').then((response) => {
       assert.strictEqual(200, response.statusCode);
-      done();
     });
   });
-  it('It should test the POST method', (done) => {
+  it('It should test the POST method', () => {
     insertUser()
       .then(
         () => request(app).post('/api/projects')
@@ -48,7 +46,6 @@ describe('Test the projects root path', () => {
         expected.owner_login = 'www5678';
         expected.pretty_name = 'dummy-project';
         assert.deepStrictEqual({ id: 1, ...expected }, response.body);
-        done();
       });
   });
 });
