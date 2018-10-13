@@ -28,7 +28,7 @@ Une requête en `POST` vers `/api/posts` permet de créer un article.
 
 ## Les routes disponibles (en cours d'élaboration)
 
-Toutes les routes décrites sont disponibles en concaténant le chemin de la route à l'URL de base ou *Base URL* suivante&nbsp;:[https://wildhub.ssd1.ovh](https://wildhub.ssd1.ovh).
+Toutes les routes décrites sont disponibles en concaténant le chemin de la route à l'URL de base ou *Base URL* suivante&nbsp;:&nbsp;[https://wildhub.ssd1.ovh](https://wildhub.ssd1.ovh).
 
 ### Récupérer tous les projets
 
