@@ -3,7 +3,6 @@ import GitHubLogin from 'react-github-login';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { clientId, redirectUri } from './settings';
-import { post } from './api.js';
 import './App.css';
 
 const serverUrl = 'https://wildhub.ssd1.ovh';
@@ -33,9 +32,10 @@ class App extends Component {
     }
   }
 
-  onSuccess = ({ code }) => post(`${serverUrl}/api/github/code`, {
+  onSuccess = ({ code }) => axios.post(`${serverUrl}/api/github/code`, {
     code
   })
+    .then(response => response.data)
     .then(({ token }) => {
       const { accessToken, login, githubId } = jwtDecode(token);
       console.log('decoded jwt', accessToken, login, githubId);
