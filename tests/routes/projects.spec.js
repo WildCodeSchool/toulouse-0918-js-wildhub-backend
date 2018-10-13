@@ -1,8 +1,9 @@
 /* global describe, it, beforeEach */
 const assert = require('assert');
 const request = require('supertest');
-const { clear, insertLanguages, insertUser } = require('../server/db-utils');
 const jwt = require('jsonwebtoken');
+const { clear, insertLanguages, insertUser } = require('../server/db-utils');
+
 const app = require('../server/app');
 
 const authToken = jwt.sign({
