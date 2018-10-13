@@ -1,0 +1,6 @@
+{
+  "host": "localhost",
+  "database": "nodejs_wildhub_test",
+  "user": "wildhubtest",
+  "password": "wildhubtest"
+}
