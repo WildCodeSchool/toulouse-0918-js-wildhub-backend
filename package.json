@@ -1,9 +1,10 @@
 {
   "name": "wildhub-backend",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "lib/index.js",
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "tools/*"
   ],
   "license": "MIT",
   "repository": {

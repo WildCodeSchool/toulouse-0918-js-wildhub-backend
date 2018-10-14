@@ -16,7 +16,10 @@ create table projects (
   description TEXT,
   homepage VARCHAR(255),
   htmlUrl VARCHAR(255),
-  language VARCHAR(30)
+  language VARCHAR(30),
+  registeredAt TIMESTAMP NOT NULL DEFAULT NOW(),
+  createdAt TIMESTAMP NOT NULL,
+  updatedAt TIMESTAMP NOT NULL
 );
 
 create table projects_languages (
