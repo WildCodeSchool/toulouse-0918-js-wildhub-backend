@@ -30,7 +30,17 @@ Une requête en `POST` vers `/api/posts` permet de créer un article.
 
 Toutes les routes décrites sont disponibles en concaténant le chemin de la route à l'URL de base ou *Base URL* suivante&nbsp;:&nbsp;[https://wildhub.ssd1.ovh](https://wildhub.ssd1.ovh).
 
-### Récupérer tous les projets
+Liste complète (détails en suivant) :
+* `GET /api/projects` récupérer tous les projets (repos)
+* `POST /api/projects` référencer/déréférencer un projet
+* `GET /api/projects/by-language/:lang` récupérer tous les projets utilisant un certain langage
+* `GET /api/users` récupérer tous les utilisateurs
+* `GET /api/users/:login` récupérer un utilisateur par son login GitHub
+* `GET /api/users/:login/projects` récupérer les projets d'un utilisateur
+* `GET /api/users/self/projects` récupérer les projets de l'utilisateur connecté
+* `GET /api/users/:login/:repoName` récupérer un repo précis d'un utilisateur
+
+### `GET /api/projects` - récupérer tous les projets
 
 * Méthode : `GET`
 * Chemin de la route: `/api/projects`
@@ -50,29 +60,60 @@ Exemple de retour de l'API (résultat avec des projets enregistrés sur mon ordi
 ```json
 [
   {
-    "id":11,
-    "github_id":147566676,
-    "owner_github_id":34350330,
+    "iid":31,
+    "id":153817247,
     "active":1,
-    "name":"bootstrap-material-design",
-    "description":"Material design theme for Bootstrap 3 and 4",
-    "homepage":"http://fezvrasta.github.io/bootstrap-material-design/",
-    "slug":"bootstrap-material-design",
-    "html_url":"https://github.com/JulesGrenier/bootstrap-material-design",
-    "language":"CSS"
+    "name":"cpp",
+    "pretty_name":"cpp",
+    "description":null,
+    "homepage":null,
+    "html_url":"https://github.com/WWWilder/cpp",
+    "language":"C++",
+    "registered_at":"2018-10-19T17:42:02.000Z",
+    "created_at":"2018-10-19T15:16:07.000Z",
+    "updated_at":"2018-10-19T15:16:24.000Z",
+    "language_stat":{
+      "C++":391
+    },
+    "owner":{
+      "id":36938461,
+      "login":"WWWilder"
+    }
+  },
+  {
+    "iid":10,
+    "id":152908263,
+    "active":1,
+    "name":"wildhub-test",
+    "pretty_name":"wildhub-test",
+    "description":"Test repo for WildHub",
+    "homepage":null,
+    "html_url":"https://github.com/WildWilder31/wildhub-test",
+    "language":"JavaScript",
+    "registered_at":"2018-10-14T10:56:10.000Z",
+    "created_at":"2018-10-13T17:43:10.000Z",
+    "updated_at":"2018-10-13T17:46:09.000Z",
+    "language_stat":{
+      "HTML":249,
+      "JavaScript":240
+    },
+    "owner":{
+      "id":36938730,
+      "login":"WildWilder31"
+    }
   }
 ]
 ```
 
 On reçoit un tableau de reposittories. Explicitation des champs :
-* `id` identifiant interne du projet/repo dans l'API WildHub
-* `github_id` identifiant du projet sur GitHub
-* `owner_github_id` identifiant du *propriétaire* du projet
-* `name` et `slug` le nom du projet sur GitHub. L'idée de base derrière cela, est qu'on pourrait permettre, depuis l'app React, d'indiquer un nom différent. Pour l'instant ce sont les deux mêmes, et mieux vaut garder `name` identique à celui sur GitHub (et éventuellement renommer `slug` en `pretty_name`).
+* `iid` identifiant interne du projet/repo dans l'API WildHub
+* `id` identifiant du projet sur GitHub
+* `owner` *propriétaire* du projet: objet ayant deux propriétés `id` et `login` (id dans la base de données de GitHub et identifiant de connextion)
+* `name` et `pretty_name` le nom du projet sur GitHub. L'idée de base derrière cela, est qu'on pourrait permettre, depuis l'app React, d'indiquer un nom différent. Pour l'instant ce sont les deux mêmes, et mieux vaut garder `name` identique à celui sur GitHub.
 * `language`: identique au champ correspondant sur GitHub, c'est à dire le langage principal utilisé
 * `languate_stat`: statistiques des langages utilisés
 
-### Enregistrer/référencer un projet
+### `POST /api/projects` enregistrer/référencer un projet
 
 * Méthode : `POST`
 * Chemin de la route: `/api/projects`
@@ -110,3 +151,23 @@ handleClickSaveButton(index) {
 }
 ```
 
+### `GET /api/projects/by-language/:lang` récupérer les projets par langage
+
+Cette route s'appelle en GET, dans l'URL il faut remplacer `:lang` par le langage en question.
+Par exemple `/api/projects/by-language/JavaScript`.
+
+### `GET /api/users` récupérer tous les utilisateurs
+
+Cette route permet de récupérer tous les utilisateurs qui se sont connectés au moins une fois à la plateforme.
+
+### `GET /api/users/:login` récupérer un utilisateur par son login GitHub
+
+On appelle cette route en remplaçant `:login` par le login GitHub de l'utilisateur. Par exemple `/api/users/WildWilder31` pour récupérer le profil de `WildWilder31`.
+
+### `GET /api/users/:login/projects` récupérer les projets d'un utilisateur
+
+En remplaçant `:login` par le login de l'utilisateur, on peut récupérer tous ses projets.
+
+#### `GET /api/users/:login/:repoName` récupérer un repo précis d'un utilisateur
+
+Remplacer `:login` par le login de l'utilisateur, et `:repoName` par le nom du repo.
